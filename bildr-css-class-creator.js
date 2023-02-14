@@ -11,17 +11,13 @@ function waitForElementAndPerformAction(selector, actionCallback) {
   });
 }
 
-function clickElement(element) {
-  element.click();
-}
-
-function setInputValue(element, value) {
+function writeClassName(element, value) {
   element.value = value;
   const keyPressEvent = new InputEvent("keypress");
   element.dispatchEvent(keyPressEvent);
 }
 
-function setCSSInput(element, value) {
+function writeCSSAttributes(element, value) {
   element.value = value;
   const inputEvent = new InputEvent("input");
   element.dispatchEvent(inputEvent);
@@ -65,7 +61,9 @@ async function performActions(classesArray) {
   try {
     await waitForElementAndPerformAction(
       "body > div.css_pY0UdpBdWEmrrlUDqKOX1A.css_23062 > div:nth-child(1) > div > div:nth-child(12)",
-      clickElement
+      (element) => {
+        element.click();
+      }
     );
     waitForElementAndPerformAction(
       `[style="height: 100%; width: 100%; position: fixed; top: 0px; left: 0px; background-color: rgba(0, 0, 0, 0.91); z-index: 999990; backdrop-filter: blur(3px); cursor: pointer; display: flex;"]`,
@@ -159,35 +157,47 @@ async function performActions(classesArray) {
 
       await waitForElementAndPerformAction(
         "div.css_310226.css_23071 > div.css_22778 > div.css_.css_22470 > div.css_22492",
-        clickElement
+        (element) => {
+          element.click();
+        }
       );
       await waitForElementAndPerformAction(
         "div.css_310226.css_23071 > div.css_22490 > div > input",
-        (element) => setInputValue(element, selector)
+        (element) => writeClassName(element, selector)
       );
       await waitForElementAndPerformAction(
         "div.css_310226.css_23071 > div.css_22490 > div > div.css_22536",
-        clickElement
+        (element) => {
+          element.click();
+        }
       );
       await waitForElementAndPerformAction(
         "div.css_24988 > div > div > div > div.css_300917.css_23052.css_25480 > div:nth-child(4) > div.css_23172",
-        clickElement
+        (element) => {
+          element.click();
+        }
       );
       await waitForElementAndPerformAction(
         "div.css_24988 > div > div > div > div.css_24857 > div:nth-child(3)",
-        clickElement
+        (element) => {
+          element.click();
+        }
       );
       await waitForElementAndPerformAction(
         '[class="css_23917"][style="width: 720px; right: 0px;"] .ace_dark > textarea',
-        (element) => setCSSInput(element, attributes)
+        (element) => writeCSSAttributes(element, attributes)
       );
       await waitForElementAndPerformAction(
         "div.css_24988 > div > div > div > div:nth-child(5) > div.css_.css_300461.css_23050",
-        clickElement
+        (element) => {
+          element.click();
+        }
       );
       await waitForElementAndPerformAction(
         '[class="css_23917"][style="width: 720px; right: 0px;"] > div.css_24987 > div.css_22492.css_23176',
-        clickElement
+        (element) => {
+          element.click();
+        }
       );
     }
     waitForElementAndPerformAction(
@@ -204,7 +214,9 @@ async function performActions(classesArray) {
     );
     await waitForElementAndPerformAction(
       "body > div:nth-child(13) > div.css_22782",
-      clickElement
+      (element) => {
+        element.click();
+      }
     );
     waitForElementAndPerformAction(
       '[src="https://documents-scus.bildr.com/bildr2ac3ef7a68e34896b1c2c2f93c0b6addrev1020/doc/B-animation-1-onBlack.AHpoifKZA0WrRlMwDXuH3Q.gif"]',
@@ -233,7 +245,9 @@ async function performActions(classesArray) {
     );
     await waitForElementAndPerformAction(
       "body > div:nth-child(13) > div.css_22782",
-      clickElement
+      (element) => {
+        element.click();
+      }
     );
     waitForElementAndPerformAction(
       '[src="https://documents-scus.bildr.com/bildr2ac3ef7a68e34896b1c2c2f93c0b6addrev1020/doc/B-animation-1-onBlack.AHpoifKZA0WrRlMwDXuH3Q.gif"]',

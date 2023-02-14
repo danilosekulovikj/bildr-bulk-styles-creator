@@ -51,18 +51,33 @@ function cssStringToArray() {
 }
 
 async function performActions(classesArray) {
-  const bildrSpinnerIMG = document.querySelector(
-    '[src="https://documents-scus.bildr.com/bildr2ac3ef7a68e34896b1c2c2f93c0b6addrev1020/doc/B-animation-1-onBlack.AHpoifKZA0WrRlMwDXuH3Q.gif"]'
+  waitForElementAndPerformAction(
+    '[src="https://documents-scus.bildr.com/bildr2ac3ef7a68e34896b1c2c2f93c0b6addrev1020/doc/B-animation-1-onBlack.AHpoifKZA0WrRlMwDXuH3Q.gif"]',
+    (element) => {
+      element.parentNode.querySelector(
+        '[innerhtml="Spinning up the studio"]'
+      ).innerHTML = "Please wait while the style classes are being created";
+      element.parentNode.style.display = "flex";
+      element.parentNode.style.zIndex = "2147483647";
+    }
   );
-  bildrSpinnerIMG.parentNode.querySelector(
-    '[innerhtml="Spinning up the studio"]'
-  ).innerHTML = "Please wait while the style classes are being created";
-  bildrSpinnerIMG.parentNode.style.display = "flex";
-  bildrSpinnerIMG.parentNode.style.zIndex = "2147483647";
+
   try {
     await waitForElementAndPerformAction(
       "body > div.css_pY0UdpBdWEmrrlUDqKOX1A.css_23062 > div:nth-child(1) > div > div:nth-child(12)",
       clickElement
+    );
+    waitForElementAndPerformAction(
+      `[style="height: 100%; width: 100%; position: fixed; top: 0px; left: 0px; background-color: rgba(0, 0, 0, 0.91); z-index: 999990; backdrop-filter: blur(3px); cursor: pointer; display: flex;"]`,
+      (element) => {
+        element.style.visibility = "hidden";
+      }
+    );
+    waitForElementAndPerformAction(
+      `[style="top: 0px; z-index: 999997; display: block;"]`,
+      (element) => {
+        element.style.visibility = "hidden";
+      }
     );
 
     for (const [index, classObj] of classesArray.entries()) {
@@ -133,9 +148,14 @@ async function performActions(classesArray) {
 
       const randomIndex = Math.floor(Math.random() * waitMessages.length);
       const message = `${waitMessages[randomIndex]}`;
-      bildrSpinnerIMG.parentNode.querySelector(
-        '[innerhtml="Spinning up the studio"]'
-      ).innerHTML = message;
+      waitForElementAndPerformAction(
+        '[src="https://documents-scus.bildr.com/bildr2ac3ef7a68e34896b1c2c2f93c0b6addrev1020/doc/B-animation-1-onBlack.AHpoifKZA0WrRlMwDXuH3Q.gif"]',
+        (element) => {
+          element.parentNode.querySelector(
+            '[innerhtml="Spinning up the studio"]'
+          ).innerHTML = message;
+        }
+      );
 
       await waitForElementAndPerformAction(
         "div.css_310226.css_23071 > div.css_22778 > div.css_.css_22470 > div.css_22492",
@@ -170,23 +190,62 @@ async function performActions(classesArray) {
         clickElement
       );
     }
+    waitForElementAndPerformAction(
+      `[style="height: 100%; width: 100%; position: fixed; top: 0px; left: 0px; background-color: rgba(0, 0, 0, 0.91); z-index: 999990; backdrop-filter: blur(3px); cursor: pointer; display: flex; visibility: hidden;"]`,
+      (element) => {
+        element.style.removeProperty("visibility");
+      }
+    );
+    waitForElementAndPerformAction(
+      `[style="top: 0px; z-index: 999997; display: block; visibility: hidden;"]`,
+      (element) => {
+        element.style.removeProperty("visibility");
+      }
+    );
     await waitForElementAndPerformAction(
       "body > div:nth-child(13) > div.css_22782",
       clickElement
     );
-    bildrSpinnerIMG.parentNode.querySelector(
-      '[innerhtml="Spinning up the studio"]'
-    ).innerHTML = `All style classes succeffuly created`;
-    setTimeout(function () {
-      bildrSpinnerIMG.parentNode.style.display = "none";
-    }, 2000);
+    waitForElementAndPerformAction(
+      '[src="https://documents-scus.bildr.com/bildr2ac3ef7a68e34896b1c2c2f93c0b6addrev1020/doc/B-animation-1-onBlack.AHpoifKZA0WrRlMwDXuH3Q.gif"]',
+      (element) => {
+        element.parentNode.querySelector(
+          '[innerhtml="Spinning up the studio"]'
+        ).innerHTML = `All style classes succeffuly created`;
+        setTimeout(function () {
+          element.parentNode.style.display = "none";
+        }, 2000);
+      }
+    );
     console.log("All actions complete.");
   } catch (error) {
+    waitForElementAndPerformAction(
+      `[style="height: 100%; width: 100%; position: fixed; top: 0px; left: 0px; background-color: rgba(0, 0, 0, 0.91); z-index: 999990; backdrop-filter: blur(3px); cursor: pointer; display: flex; visibility: hidden;"]`,
+      (element) => {
+        element.style.removeProperty("visibility");
+      }
+    );
+    waitForElementAndPerformAction(
+      `[style="top: 0px; z-index: 999997; display: block; visibility: hidden;"]`,
+      (element) => {
+        element.style.removeProperty("visibility");
+      }
+    );
     await waitForElementAndPerformAction(
       "body > div:nth-child(13) > div.css_22782",
       clickElement
     );
-    bildrSpinnerIMG.parentNode.style.display = "none";
+    waitForElementAndPerformAction(
+      '[src="https://documents-scus.bildr.com/bildr2ac3ef7a68e34896b1c2c2f93c0b6addrev1020/doc/B-animation-1-onBlack.AHpoifKZA0WrRlMwDXuH3Q.gif"]',
+      (element) => {
+        element.parentNode.querySelector(
+          '[innerhtml="Spinning up the studio"]'
+        ).innerHTML = `Looks like something went wrong. Give it another shot!`;
+        setTimeout(function () {
+          element.parentNode.style.display = "none";
+        }, 2000);
+      }
+    );
     console.error("An error occurred:", error);
   }
 }

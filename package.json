@@ -1,5 +1,5 @@
 {
-  "name": "bildr-css-class-creator",
+  "name": "bildr-bulk-style-creator",
   "private": true,
   "version": "1.0.0",
   "description": "Bildr - Bulk Style Creator is a plugin that generates style classes in the background, making it easy to import pre-existing classes without manual copying and pasting.",

@@ -7,6 +7,11 @@ module.exports = {
     emptyOutDir: true,
     rollupOptions: {
       input: "./src/main.js",
+      output: {
+        entryFileNames: "main.min.js",
+        chunkFileNames: "[name].js",
+        assetFileNames: "[name][extname]",
+      },
     },
   },
 };

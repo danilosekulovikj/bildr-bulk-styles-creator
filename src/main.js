@@ -5,9 +5,9 @@ import { createCloseModalButton } from "./components/createCloseModalButton";
 import { createModalTitle } from "./components/createModalTitle";
 import { createModalHeader } from "./components/createModalHeader";
 import { createCodeEditor } from "./components/createCodeEditor";
-import { createImportButton } from "./components/createImportButton";
+import { createStylesButton } from "./components/createStylesButton";
 import { createNewClassButtonsWrapper } from "./components/createNewClassButtonsWrapper";
-import { createBulkImportStylesButton } from "./components/createBulkImportStylesButton";
+import { createBulkCreateStylesButton } from "./components/createBulkCreateStylesButton";
 import { openModal } from "./utils/openModal";
 import { waitForElementAndPerformAction } from "./utils/waitForElementAndPerformAction";
 
@@ -18,26 +18,30 @@ export const closeModalButton = createCloseModalButton();
 export const modalTitle = createModalTitle();
 const modalHeader = createModalHeader();
 const codeEditor = createCodeEditor();
-const importButton = createImportButton();
+const importButton = createStylesButton();
 const newClassButtonsWrapper = createNewClassButtonsWrapper();
-const bulkImportStylesButton = createBulkImportStylesButton();
-const stylesButtonIcon = document.querySelector(
-  `[src="https://documents-scus.bildr.com/r42cd8b88129b4598818f5cb696e472bf/doc/css3.vchGyLHSwkGdq01kQ6oryQ.svg"]`
-).parentElement;
-stylesButtonIcon.addEventListener("click", () => {
-  waitForElementAndPerformAction(
-    "div.css_310226.css_23071 > div.css_22778 > div.css_.css_22470 > div.css_22492",
-    (element) => {
-      element.parentNode.insertBefore(newClassButtonsWrapper, element);
-      element.style.margin = "0";
-      newClassButtonsWrapper.appendChild(element);
-      newClassButtonsWrapper.appendChild(bulkImportStylesButton);
-      bulkImportStylesButton.addEventListener("click", () => {
-        openModal();
-      });
-    }
-  );
-});
+const bulkImportStylesButton = createBulkCreateStylesButton();
+
+waitForElementAndPerformAction(
+  `[src="https://documents-scus.bildr.com/r42cd8b88129b4598818f5cb696e472bf/doc/css3.vchGyLHSwkGdq01kQ6oryQ.svg"]`,
+  (element) => {
+    const stylesButtonIcon = element.parentElement;
+    stylesButtonIcon.addEventListener("click", () => {
+      waitForElementAndPerformAction(
+        "div.css_310226.css_23071 > div.css_22778 > div.css_.css_22470 > div.css_22492",
+        (element) => {
+          element.parentNode.insertBefore(newClassButtonsWrapper, element);
+          element.style.margin = "0";
+          newClassButtonsWrapper.appendChild(element);
+          newClassButtonsWrapper.appendChild(bulkImportStylesButton);
+          bulkImportStylesButton.addEventListener("click", () => {
+            openModal();
+          });
+        }
+      );
+    });
+  }
+);
 
 modal.appendChild(modalHeader);
 modal.appendChild(modalInner);

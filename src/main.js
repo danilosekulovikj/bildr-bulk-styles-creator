@@ -1,41 +1,47 @@
-import { createModalWrapper } from "./components/createModalWrapper";
+import { modalWrapper } from "./components/createModalWrapper";
 import { createNewClassButtonsWrapper } from "./components/createNewClassButtonsWrapper";
 import { createBulkCreateStylesButton } from "./components/createBulkCreateStylesButton";
 import { openModal } from "./utils/openModal";
-import { waitForElementAndPerformAction } from "./utils/waitForElementAndPerformAction";
+import { aceEditorObj } from "./components/aceEditor";
 
-export const modalWrapper = createModalWrapper();
 const newClassButtonsWrapper = createNewClassButtonsWrapper();
 const bulkImportStylesButton = createBulkCreateStylesButton();
 
-waitForElementAndPerformAction(
-  `[src="https://documents-scus.bildr.com/bildr2ac3ef7a68e34896b1c2c2f93c0b6addrev1020/doc/css3.vchGyLHSwkGdq01kQ6oryQ.svg"]`,
-  (element) => {
-    const stylesButtonIcon = element.parentElement;
-    stylesButtonIcon.addEventListener("click", () => {
-      waitForElementAndPerformAction(
-        "div.css_310226.css_23071 > div.css_22778 > div.css_.css_22470 > div.css_22492",
-        (element) => {
-          element.parentNode.insertBefore(newClassButtonsWrapper, element);
-          element.style.margin = "0";
-          newClassButtonsWrapper.append(element, bulkImportStylesButton);
-          bulkImportStylesButton.addEventListener("click", () => {
-            openModal();
-          });
-        }
-      );
-    });
-  }
+const targetNode = document.querySelector(
+  '[name="Unified Search"][class="css_310226 css_23071 "]'
 );
 
-document.body.appendChild(modalWrapper);
-
-export const aceEditor = ace.edit("rawCSSEditor");
-aceEditor.setOptions({
-  theme: "ace/theme/twilight",
-  mode: "ace/mode/css",
-  useWorker: false,
-  highlightActiveLine: true,
-  showPrintMargin: false,
-  wrap: true,
+const observer = new MutationObserver((mutationsList, observer) => {
+  for (let mutation of mutationsList) {
+    if (mutation.type === "childList") {
+      for (let addedNode of mutation.addedNodes) {
+        if (addedNode.nodeType === Node.ELEMENT_NODE) {
+          const targetElement = addedNode.querySelector(".css_22492");
+          if (!newClassButtonsWrapper.contains(targetElement)) {
+            if (targetElement) {
+              // do something
+              targetElement.parentNode.insertBefore(
+                newClassButtonsWrapper,
+                targetElement
+              );
+              targetElement.style.margin = "0";
+              newClassButtonsWrapper.append(
+                targetElement,
+                bulkImportStylesButton
+              );
+              bulkImportStylesButton.addEventListener("click", () => {
+                openModal();
+              });
+            }
+          }
+        }
+      }
+    }
+  }
 });
+
+const config = { childList: true, subtree: true };
+observer.observe(targetNode, config);
+
+document.body.appendChild(modalWrapper);
+aceEditorObj.init();

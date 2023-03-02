@@ -32,7 +32,6 @@ export async function performActions(classesArray) {
         credentials: "include",
       })
         .then((response) => response.json())
-        .then((data) => {})
         .catch((error) => {
           // Handle errors here
           console.error(error);

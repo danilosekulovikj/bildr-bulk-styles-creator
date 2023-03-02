@@ -1,4 +1,4 @@
-import { modalWrapper } from "../main";
+import { modalWrapper } from "../components/createModalWrapper";
 import { modal } from "../components/createModalWrapper";
 // Function to close modal
 export function closeModal(event, element) {

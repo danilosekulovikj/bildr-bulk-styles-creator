@@ -1,4 +1,5 @@
-import { aceEditor, modalWrapper, modal } from "../main";
+import { aceEditor, modalWrapper } from "../main";
+import { modal } from "../components/createModalWrapper";
 
 // Function to open modal
 export function openModal() {

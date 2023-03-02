@@ -1,6 +1,5 @@
 import { performActions } from "./performActions";
 
-// Converts the pasted rawCSS into array with properties
 export function cssStringToArray(rawCSS) {
   const cssString = rawCSS;
   if (!cssString) return;
@@ -15,11 +14,23 @@ export function cssStringToArray(rawCSS) {
     const parts = rule.split("{");
     const selector = parts[0].trim().replace(/^\./, "");
     const attributesString = parts[1].replace(/[\n\r]/g, "").trim();
+    const attributesArray = attributesString
+      .split(";")
+      .filter(Boolean)
+      .map((attribute) => {
+        const [propertyName, value] = attribute.split(":");
+        return {
+          propertyName: propertyName.trim(),
+          value: value.trim(),
+          newProperty: "0",
+        };
+      });
 
     result.push({
       selector,
-      attributes: attributesString,
+      attributes: attributesArray,
     });
   }
   performActions(result);
+  return result;
 }

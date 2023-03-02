@@ -1,4 +1,7 @@
 import { closeModal } from "../utils/closeModal.js";
+import { createModal } from "./createModal.js";
+
+export const modal = createModal();
 
 export function createModalWrapper() {
   const modalWrapper = document.createElement("div");
@@ -7,5 +10,6 @@ export function createModalWrapper() {
   modalWrapper.addEventListener("click", (event) =>
     closeModal(event, modalWrapper)
   );
+  modalWrapper.appendChild(modal);
   return modalWrapper;
 }

@@ -4,23 +4,23 @@ import { bulkImportStylesButton } from "./components/createBulkCreateStylesButto
 import { openModal } from "./utils/openModal";
 import { aceEditorObj } from "./components/aceEditor";
 
-if (!localStorage.getItem("bccPluginEnabledFor")) {
-  localStorage.setItem("bccPluginEnabledFor", JSON.stringify([]));
+if (!localStorage.getItem("bscPluginEnabledFor")) {
+  localStorage.setItem("bscPluginEnabledFor", JSON.stringify([]));
 }
 
 let projectId = window.baseSelProjID;
 let enabledForProjects = JSON.parse(
-  localStorage.getItem("bccPluginEnabledFor")
+  localStorage.getItem("bscPluginEnabledFor")
 );
 let observerRunning = false;
 
-var BildrBulkClassCreator;
-(function (BildrBulkClassCreator) {
-  class BildrBulkClassCreatorPlugin extends Bildr.plugins.PluginBase {
+var BildrBulkStylesCreator;
+(function (BildrBulkStylesCreator) {
+  class BildrBulkStylesCreatorPlugin extends Bildr.plugins.PluginBase {
     constructor() {
       super(
-        "BildrBulkClassDev",
-        "https://p27b199c99d034975afab252b7f1086c4.bildr.com/dev"
+        "BulkStylesCreator",
+        "https://p27b199c99d034975afab252b7f1086c4.bildr.com/"
       );
       this.addAction("hidePlugin", () => {
         this.hide();
@@ -29,7 +29,7 @@ var BildrBulkClassCreator;
         if (enabledForProjects.indexOf(projectId) === -1) {
           enabledForProjects.push(projectId);
           localStorage.setItem(
-            "bccPluginEnabledFor",
+            "bscPluginEnabledFor",
             JSON.stringify(enabledForProjects)
           );
         }
@@ -44,7 +44,7 @@ var BildrBulkClassCreator;
           enabledForProjects.splice(index, 1);
         }
         localStorage.setItem(
-          "bccPluginEnabledFor",
+          "bscPluginEnabledFor",
           JSON.stringify(enabledForProjects)
         );
         if (observerRunning && enabledForProjects.indexOf(projectId) === -1) {
@@ -62,9 +62,9 @@ var BildrBulkClassCreator;
       });
     }
   }
-  BildrBulkClassCreator.BildrBulkClassCreatorPlugin =
-    BildrBulkClassCreatorPlugin;
-  console.log("BildrBulkClassCreator loaded");
+  BildrBulkStylesCreator.BildrBulkStylesCreatorPlugin =
+    BildrBulkStylesCreatorPlugin;
+  console.log("Bulk Styles Creator loaded");
 
   const targetNode = document.querySelector(
     '[name="Unified Search"][class="css_310226 css_23071 "]'
@@ -105,8 +105,8 @@ var BildrBulkClassCreator;
 
   document.body.appendChild(modalWrapper);
   aceEditorObj.init();
-})(BildrBulkClassCreator || (BildrBulkClassCreator = {}));
+})(BildrBulkStylesCreator || (BildrBulkStylesCreator = {}));
 // Register the plugin on loading this script
 Bildr.plugins.manager.register(
-  new BildrBulkClassCreator.BildrBulkClassCreatorPlugin()
+  new BildrBulkStylesCreator.BildrBulkStylesCreatorPlugin()
 );

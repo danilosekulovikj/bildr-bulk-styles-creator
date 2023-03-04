@@ -56,7 +56,7 @@ var BildrBulkClassCreator;
       this.addAction("checkIfProjectExist", () => {
         if (enabledForProjects && enabledForProjects.indexOf(projectId) > -1) {
           if (!observerRunning) {
-            return;
+            return "Enable Plugin";
           }
         }
       });

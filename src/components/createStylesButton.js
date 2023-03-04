@@ -2,7 +2,7 @@ import { cssStringToArray } from "../utils/cssStringToArray.js";
 import { closeModal } from "../utils/closeModal.js";
 import { aceEditorObj } from "./aceEditor.js";
 
-export function createStylesButton() {
+function createStylesButton() {
   const importButton = document.createElement("div");
   importButton.innerText = "Create Styles";
   importButton.classList.add("css_300461", "css_23050");
@@ -14,3 +14,5 @@ export function createStylesButton() {
   });
   return importButton;
 }
+
+export const importButton = createStylesButton();

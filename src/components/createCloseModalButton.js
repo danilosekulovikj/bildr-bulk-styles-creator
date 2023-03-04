@@ -1,6 +1,6 @@
 import { closeModal } from "../utils/closeModal.js";
 
-export function createCloseModalButton() {
+function createCloseModalButton() {
   const closeModalButton = document.createElement("div");
   closeModalButton.innerText = "Close";
   closeModalButton.classList.add("css_22492", "css_23176");
@@ -11,3 +11,5 @@ export function createCloseModalButton() {
   );
   return closeModalButton;
 }
+
+export const closeModalButton = createCloseModalButton();

@@ -1,6 +1,6 @@
 export let isPrimary = true;
 
-export function createClassTypeSwitch() {
+function createClassTypeSwitch() {
   const switchHeader = document.createElement("div");
   const headerHeading = document.createElement("span");
   const switchWrapper = document.createElement("div");
@@ -39,3 +39,5 @@ export function createClassTypeSwitch() {
   switchHeader.append(headerHeading, switchWrapper);
   return switchHeader;
 }
+
+export const classTypeSwitch = createClassTypeSwitch();

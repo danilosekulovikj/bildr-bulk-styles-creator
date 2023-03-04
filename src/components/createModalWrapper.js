@@ -1,7 +1,5 @@
 import { closeModal } from "../utils/closeModal.js";
-import { createModal } from "./createModal.js";
-
-export const modal = createModal();
+import { modal } from "./createModal.js";
 
 function createModalWrapper() {
   const modalWrapper = document.createElement("div");

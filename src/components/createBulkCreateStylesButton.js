@@ -1,6 +1,8 @@
-export function createBulkCreateStylesButton() {
+function createBulkCreateStylesButton() {
   const bulkImportStylesButton = document.createElement("div");
   bulkImportStylesButton.innerText = "Bulk Create Styles";
   bulkImportStylesButton.classList.add("css_22492");
   return bulkImportStylesButton;
 }
+
+export const bulkImportStylesButton = createBulkCreateStylesButton();

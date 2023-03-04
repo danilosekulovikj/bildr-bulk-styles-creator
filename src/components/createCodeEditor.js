@@ -1,6 +1,7 @@
-export function createCodeEditor() {
+function createCodeEditor() {
   const codeEditor = document.createElement("div");
   codeEditor.style = "width: 100%; height: 100%;";
   codeEditor.id = "rawCSSEditor";
   return codeEditor;
 }
+export const codeEditor = createCodeEditor();

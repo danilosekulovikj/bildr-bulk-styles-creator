@@ -1,21 +1,55 @@
-export function generateReqBody(
+export function generateReqBody({
   projectID,
   revisionID,
   bildrSocketID,
   selector,
   attributes,
-  isPrimary
-) {
+  isPrimary,
+  id,
+  fromStyleID,
+  states,
+}) {
   const rec = {
-    id: 0,
-    name: selector,
-    options: {
-      stylesArray: attributes,
-    },
+    options: {},
   };
 
+  if (id) {
+    rec.id = id;
+  } else {
+    rec.id = 0;
+  }
+
+  if (selector) {
+    rec.name = selector;
+  }
+
+  if (attributes) {
+    rec.options = {
+      ...rec.options,
+      stylesArray: attributes,
+    };
+  }
+
   if (isPrimary) {
-    rec.options.mainStyle = 1;
+    rec.options = {
+      ...rec.options,
+      mainStyle: 1,
+    };
+  }
+
+  if (fromStyleID) {
+    rec.options = {
+      ...rec.options,
+      state: 1,
+      fromStyleID: fromStyleID,
+    };
+  }
+
+  if (states) {
+    rec.options = {
+      ...rec.options,
+      states: states,
+    };
   }
 
   return {

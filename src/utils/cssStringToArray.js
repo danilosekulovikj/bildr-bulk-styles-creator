@@ -165,10 +165,12 @@ export function cssStringToArray(rawCSS) {
                   selector.attributes = [];
                 }
                 let attribute = {
-                  property: childNode.property,
-                  value: csstree.generate(childNode.value),
-                  important: childNode.important,
+                  propertyName: childNode.property,
+                  value:
+                    csstree.generate(childNode.value) +
+                    (childNode.important ? " !important" : ""),
                 };
+
                 selector.attributes.push(attribute);
               }
             });
@@ -212,9 +214,10 @@ export function cssStringToArray(rawCSS) {
     csstree.walk(rule, (node) => {
       if (node.type === "Declaration") {
         let attribute = {
-          property: node.property,
-          value: csstree.generate(node.value),
-          important: node.important,
+          propertyName: Node.property,
+          value:
+            csstree.generate(node.value) +
+            (node.important ? " !important" : ""),
         };
         attributes.push(attribute);
       }
@@ -225,7 +228,6 @@ export function cssStringToArray(rawCSS) {
 
   selectorsArray = selectorsArray.filter((obj) => "selector" in obj);
 
-  console.log(selectorsArray);
   performActions(selectorsArray);
   return selectorsArray;
 }

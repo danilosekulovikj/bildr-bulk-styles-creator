@@ -15,8 +15,6 @@ export async function performActions(classesArray) {
     for (const [index, classObj] of classesArray.entries()) {
       const { selector, attributes, pseudoSelectors, mediaQueries } = classObj;
 
-      let promises = [];
-
       const newClassReq = await fetch(
         "https://www.bildr.com/_/record/save/18",
         {
@@ -41,6 +39,8 @@ export async function performActions(classesArray) {
       );
 
       const newClassRes = await newClassReq.json();
+
+      const primaryMediaQueryPromise = [];
 
       if (mediaQueries) {
         for (const mediaQuery of mediaQueries) {
@@ -123,12 +123,12 @@ export async function performActions(classesArray) {
                 }
               );
               // Add the promise to the array
-              promises.push(newMediaQueryPromise);
+              primaryMediaQueryPromise.push(newMediaQueryPromise);
             }
           })();
         }
         // Wait for all the promises to resolve
-        await Promise.all(promises);
+        await Promise.all(primaryMediaQueryPromise);
       }
 
       const primaryClassID = newClassRes.obj.recs[0].id;
@@ -138,10 +138,12 @@ export async function performActions(classesArray) {
         { state: "disabled", default: 1 },
       ];
 
+      let newAttrRes;
+      const primaryPseudoClassPromise = [];
+
       if (pseudoSelectors) {
         for (const pseudoSelector of pseudoSelectors) {
           await (async () => {
-            console.log(pseudoSelector);
             const defaultPseudoAttributes = [
               {
                 newProperty: "0",
@@ -152,13 +154,11 @@ export async function performActions(classesArray) {
               },
             ];
 
-            console.log(pseudoSelector.pseudoName);
-
             if (pseudoSelector.attributes) {
               const pseudoClassPromise = new Promise(
                 async (resolve, reject) => {
                   try {
-                    const response2 = await fetch(
+                    const newAttrReq = await fetch(
                       "https://www.bildr.com/_/record/save/18",
                       {
                         headers: {
@@ -184,10 +184,10 @@ export async function performActions(classesArray) {
                       }
                     );
 
-                    const data2 = await response2.json();
+                    newAttrRes = await newAttrReq.json();
 
-                    const pseudoClassID = data2.obj.recs[0].id;
-                    const pseudoClassName = data2.obj.recs[0].name;
+                    const pseudoClassID = newAttrRes.obj.recs[0].id;
+                    const pseudoClassName = newAttrRes.obj.recs[0].name;
 
                     if (pseudoClassName && pseudoClassID) {
                       const existingState = states.find(
@@ -210,13 +210,14 @@ export async function performActions(classesArray) {
                 }
               );
               // Add the promise to the array
-              promises.push(pseudoClassPromise);
+              primaryPseudoClassPromise.push(pseudoClassPromise);
             }
 
             // Wait for all the promises to resolve
-            await Promise.all(promises);
+            await Promise.all(primaryPseudoClassPromise);
 
-            const response3 = await fetch(
+            // Update the pseudo states
+            const newPseudoStatesReq = await fetch(
               "https://www.bildr.com/_/record/save/18",
               {
                 headers: {
@@ -229,7 +230,7 @@ export async function performActions(classesArray) {
                     revisionID: revisionID,
                     bildrSocketID: bildrSocketID,
                     isPrimary: isPrimary,
-                    attributes: attributes,
+                    attributes: attributes, // Check if this should be pseudoSelector.attributes
                     states: states,
                     id: primaryClassID,
                   })
@@ -240,157 +241,127 @@ export async function performActions(classesArray) {
               }
             );
 
-            if (pseudoSelector.mediaQueries) {
-              pseudoSelector.mediaQueries.forEach((mediaQuery) => {
-                // Check if the media query exists
-                const foundMediaQuery = findMediaQuery(mediaQuery);
+            // const nestedMediaQueriesPromises = [];
 
-                if (foundMediaQuery) {
-                  // Update the media query
-                  console.log(
-                    `parentId: ${foundMediaQuery.id}, name: ${foundMediaQuery.name}`
-                  );
-                  mediaQuery.attributes.forEach((attribute) => {
-                    console.log(attribute);
-                  });
-                } else {
-                  // Create a new media query
-                  console.log(mediaQuery.name);
-                  mediaQuery.attributes.forEach((attribute) => {
-                    console.log(attribute);
-                  });
-                }
-              });
+            if (pseudoSelector.mediaQueries) {
+              for (const mediaQuery of pseudoSelector.mediaQueries) {
+                await (async () => {
+                  // Check if the media query exists
+                  const foundMediaQuery = findMediaQuery(mediaQuery);
+
+                  if (foundMediaQuery) {
+                    // Update the media query
+                    console.log(
+                      `parentId: ${foundMediaQuery.id}, name: ${foundMediaQuery.name}`
+                    );
+                    mediaQuery.attributes.forEach((attribute) => {
+                      console.log(attribute);
+                    });
+                  } else {
+                    // Create a new media query
+                    console.log("creating new ..." + mediaQuery.name);
+                    mediaQuery.attributes.forEach((attribute) => {
+                      console.log(attribute);
+                    });
+                  }
+                })();
+              }
             }
+
+            // if (pseudoSelector.mediaQueries) {
+            //   for (const mediaQuery of pseudoSelector.mediaQueries) {
+            //     await (async () => {
+            //       // Check if the media query exists
+            //       const foundMediaQuery = findMediaQuery(mediaQuery);
+
+            //       if (foundMediaQuery) {
+            //         // Update the media query
+
+            //         mediaQuery.attributes.forEach(async (attribute) => {
+            //           const msbody = generateMediaStylesBody(
+            //             foundMediaQuery,
+            //             newAttrRes,
+            //             attribute,
+            //             bildrSocketID,
+            //             revisionID,
+            //             projectID
+            //           );
+
+            //           await fetch("https://www.bildr.com/_/record/save/18", {
+            //             headers: {
+            //               accept: "*/*",
+            //               "content-type": "application/json",
+            //             },
+            //             body: JSON.stringify(msbody),
+            //             method: "POST",
+            //             mode: "cors",
+            //             credentials: "include",
+            //           });
+            //         });
+            //       } else {
+            //         // Create a new media query
+            //         const newMediaQueryPromise = new Promise(
+            //           async (resolve, reject) => {
+            //             try {
+            //               const mqbody = generateMediaQueryBody(mediaQuery);
+
+            //               const newMediaReq = await fetch(
+            //                 "https://www.bildr.com/_/record/save/18",
+            //                 {
+            //                   headers: {
+            //                     accept: "*/*",
+            //                     "content-type": "application/json",
+            //                   },
+            //                   body: JSON.stringify(mqbody),
+            //                   method: "POST",
+            //                   mode: "cors",
+            //                   credentials: "include",
+            //                 }
+            //               );
+
+            //               const newMediaRes = await newMediaReq.json();
+
+            //               mediaQuery.attributes.forEach(async (attribute) => {
+            //                 const msbody = generateMediaStylesBody(
+            //                   newMediaRes,
+            //                   newAttrRes,
+            //                   attribute,
+            //                   bildrSocketID,
+            //                   revisionID,
+            //                   projectID
+            //                 );
+
+            //                 await fetch(
+            //                   "https://www.bildr.com/_/record/save/18",
+            //                   {
+            //                     headers: {
+            //                       accept: "*/*",
+            //                       "content-type": "application/json",
+            //                     },
+            //                     body: JSON.stringify(msbody),
+            //                     method: "POST",
+            //                     mode: "cors",
+            //                     credentials: "include",
+            //                   }
+            //                 );
+            //               });
+            //               resolve();
+            //             } catch (error) {
+            //               reject(error);
+            //             }
+            //           }
+            //         );
+            //         // Add the promise to the array
+            //         nestedMediaQueriesPromises.push(newMediaQueryPromise);
+            //       }
+            //     })();
+            //   }
+            //   // Wait for all the promises to resolve
+            //   await Promise.all(nestedMediaQueriesPromises);
+            // }
           })();
         }
       }
-
-      // const response1 = await fetch("https://www.bildr.com/_/record/save/18", {
-      //   headers: {
-      //     accept: "*/*",
-      //     "content-type": "application/json",
-      //   },
-      //   body: JSON.stringify(
-      //     generateReqBody({
-      //       projectID: projectID,
-      //       revisionID: revisionID,
-      //       bildrSocketID: bildrSocketID,
-      //       selector: selector,
-      //       attributes: attributes,
-      //       isPrimary: isPrimary,
-      //     })
-      //   ),
-      //   method: "POST",
-      //   mode: "cors",
-      //   credentials: "include",
-      // });
-      // const data1 = await response1.json();
-
-      // const primaryClassID = data1.obj.recs[0].id;
-      // const states = [
-      //   { state: "default", default: 1 },
-      //   { state: "hover", default: 1 },
-      //   { state: "disabled", default: 1 },
-      // ];
-      // let promises = [];
-      // if (pseudoSelectors) {
-      //   pseudoSelectors.forEach(async (child) => {
-      //     const defaultPseudoAttributes = [
-      //       {
-      //         newProperty: "0",
-      //         propertyName: "selector",
-      //         value: `.css_${primaryClassID}:${child.pseudoName}`,
-      //         originalPropertyName: "selector",
-      //         enterManually: "",
-      //       },
-      //     ];
-
-      //     const pseudoClassPromise = new Promise(async (resolve, reject) => {
-      //       try {
-      //         const response2 = await fetch(
-      //           "https://www.bildr.com/_/record/save/18",
-      //           {
-      //             headers: {
-      //               accept: "*/*",
-      //               "content-type": "application/json",
-      //             },
-      //             body: JSON.stringify(
-      //               generateReqBody({
-      //                 projectID: projectID,
-      //                 revisionID: revisionID,
-      //                 bildrSocketID: bildrSocketID,
-      //                 selector: child.pseudoName,
-      //                 attributes: [
-      //                   ...defaultPseudoAttributes,
-      //                   ...child.attributes,
-      //                 ],
-      //                 fromStyleID: primaryClassID,
-      //               })
-      //             ),
-      //             method: "POST",
-      //             mode: "cors",
-      //             credentials: "include",
-      //           }
-      //         );
-
-      //         const data2 = await response2.json();
-
-      //         const pseudoClassID = data2.obj.recs[0].id;
-      //         const pseudoClassName = data2.obj.recs[0].name;
-
-      //         if (pseudoClassName && pseudoClassID) {
-      //           const existingState = states.find(
-      //             (state) => state.state === pseudoClassName
-      //           );
-      //           if (existingState) {
-      //             existingState.styleClassID = pseudoClassID;
-      //           } else {
-      //             states.push({
-      //               state: pseudoClassName,
-      //               styleClassID: pseudoClassID,
-      //             });
-      //           }
-      //         }
-
-      //         resolve();
-      //       } catch (error) {
-      //         reject(error);
-      //       }
-      //     });
-      //     // Add the promise to the array
-      //     promises.push(pseudoClassPromise);
-      //   });
-
-      //   // Wait for all the promises to resolve
-      //   await Promise.all(promises);
-
-      //   const response3 = await fetch(
-      //     "https://www.bildr.com/_/record/save/18",
-      //     {
-      //       headers: {
-      //         accept: "*/*",
-      //         "content-type": "application/json",
-      //       },
-      //       body: JSON.stringify(
-      //         generateReqBody({
-      //           projectID: projectID,
-      //           revisionID: revisionID,
-      //           bildrSocketID: bildrSocketID,
-      //           isPrimary: isPrimary,
-      //           attributes: attributes,
-      //           states: states,
-      //           id: primaryClassID,
-      //         })
-      //       ),
-      //       method: "POST",
-      //       mode: "cors",
-      //       credentials: "include",
-      //     }
-      //   );
-
-      //   const data3 = await response3.json();
-      // }
     }
     console.log("All actions complete.");
   } catch (error) {

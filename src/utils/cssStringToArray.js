@@ -214,10 +214,9 @@ export function cssStringToArray(rawCSS) {
     csstree.walk(rule, (node) => {
       if (node.type === "Declaration") {
         let attribute = {
-          propertyName: Node.property,
+          propertyName: node.property,
           value:
-            csstree.generate(node.value) +
-            (node.important ? " !important" : ""),
+            csstree.generate(node.value) + (node.important ? "!important" : ""),
         };
         attributes.push(attribute);
       }

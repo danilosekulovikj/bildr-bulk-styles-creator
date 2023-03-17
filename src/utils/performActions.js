@@ -12,6 +12,8 @@ export const bildrSocketID = generateUID();
 
 export async function performActions(classesArray) {
   try {
+    const createdMediaQueries = [];
+
     for (const [index, classObj] of classesArray.entries()) {
       const { selector, attributes, pseudoSelectors, mediaQueries } = classObj;
 
@@ -46,7 +48,10 @@ export async function performActions(classesArray) {
         for (const mediaQuery of mediaQueries) {
           await (async () => {
             // Check if the media query exists
-            const foundMediaQuery = findMediaQuery(mediaQuery);
+            const foundMediaQuery = findMediaQuery(
+              mediaQuery,
+              createdMediaQueries
+            );
 
             if (foundMediaQuery) {
               // Update the media query
@@ -94,6 +99,7 @@ export async function performActions(classesArray) {
                     );
 
                     const newMediaRes = await newMediaReq.json();
+                    createdMediaQueries.push(newMediaRes.obj.recs[0]);
 
                     mediaQuery.attributes.forEach(async (attribute) => {
                       const msbody = generateMediaStylesBody(
@@ -241,124 +247,102 @@ export async function performActions(classesArray) {
               }
             );
 
-            // const nestedMediaQueriesPromises = [];
+            const nestedMediaQueriesPromises = [];
 
             if (pseudoSelector.mediaQueries) {
               for (const mediaQuery of pseudoSelector.mediaQueries) {
                 await (async () => {
                   // Check if the media query exists
-                  const foundMediaQuery = findMediaQuery(mediaQuery);
+                  const foundMediaQuery = findMediaQuery(
+                    mediaQuery,
+                    createdMediaQueries
+                  );
 
                   if (foundMediaQuery) {
                     // Update the media query
-                    console.log(
-                      `parentId: ${foundMediaQuery.id}, name: ${foundMediaQuery.name}`
-                    );
-                    mediaQuery.attributes.forEach((attribute) => {
-                      console.log(attribute);
+
+                    mediaQuery.attributes.forEach(async (attribute) => {
+                      const msbody = generateMediaStylesBody(
+                        foundMediaQuery,
+                        newAttrRes,
+                        attribute,
+                        bildrSocketID,
+                        revisionID,
+                        projectID
+                      );
+
+                      await fetch("https://www.bildr.com/_/record/save/18", {
+                        headers: {
+                          accept: "*/*",
+                          "content-type": "application/json",
+                        },
+                        body: JSON.stringify(msbody),
+                        method: "POST",
+                        mode: "cors",
+                        credentials: "include",
+                      });
                     });
                   } else {
                     // Create a new media query
-                    console.log("creating new ..." + mediaQuery.name);
-                    mediaQuery.attributes.forEach((attribute) => {
-                      console.log(attribute);
-                    });
+                    const newMediaQueryPromise = new Promise(
+                      async (resolve, reject) => {
+                        try {
+                          const mqbody = generateMediaQueryBody(mediaQuery);
+
+                          const newMediaReq = await fetch(
+                            "https://www.bildr.com/_/record/save/18",
+                            {
+                              headers: {
+                                accept: "*/*",
+                                "content-type": "application/json",
+                              },
+                              body: JSON.stringify(mqbody),
+                              method: "POST",
+                              mode: "cors",
+                              credentials: "include",
+                            }
+                          );
+
+                          const newMediaRes = await newMediaReq.json();
+
+                          mediaQuery.attributes.forEach(async (attribute) => {
+                            const msbody = generateMediaStylesBody(
+                              newMediaRes,
+                              newAttrRes,
+                              attribute,
+                              bildrSocketID,
+                              revisionID,
+                              projectID
+                            );
+
+                            await fetch(
+                              "https://www.bildr.com/_/record/save/18",
+                              {
+                                headers: {
+                                  accept: "*/*",
+                                  "content-type": "application/json",
+                                },
+                                body: JSON.stringify(msbody),
+                                method: "POST",
+                                mode: "cors",
+                                credentials: "include",
+                              }
+                            );
+                          });
+                          resolve();
+                        } catch (error) {
+                          reject(error);
+                        }
+                      }
+                    );
+                    // Add the promise to the array
+                    nestedMediaQueriesPromises.push(newMediaQueryPromise);
                   }
                 })();
               }
+              // Wait for all the promises to resolve
+              await Promise.all(nestedMediaQueriesPromises);
             }
-
-            // if (pseudoSelector.mediaQueries) {
-            //   for (const mediaQuery of pseudoSelector.mediaQueries) {
-            //     await (async () => {
-            //       // Check if the media query exists
-            //       const foundMediaQuery = findMediaQuery(mediaQuery);
-
-            //       if (foundMediaQuery) {
-            //         // Update the media query
-
-            //         mediaQuery.attributes.forEach(async (attribute) => {
-            //           const msbody = generateMediaStylesBody(
-            //             foundMediaQuery,
-            //             newAttrRes,
-            //             attribute,
-            //             bildrSocketID,
-            //             revisionID,
-            //             projectID
-            //           );
-
-            //           await fetch("https://www.bildr.com/_/record/save/18", {
-            //             headers: {
-            //               accept: "*/*",
-            //               "content-type": "application/json",
-            //             },
-            //             body: JSON.stringify(msbody),
-            //             method: "POST",
-            //             mode: "cors",
-            //             credentials: "include",
-            //           });
-            //         });
-            //       } else {
-            //         // Create a new media query
-            //         const newMediaQueryPromise = new Promise(
-            //           async (resolve, reject) => {
-            //             try {
-            //               const mqbody = generateMediaQueryBody(mediaQuery);
-
-            //               const newMediaReq = await fetch(
-            //                 "https://www.bildr.com/_/record/save/18",
-            //                 {
-            //                   headers: {
-            //                     accept: "*/*",
-            //                     "content-type": "application/json",
-            //                   },
-            //                   body: JSON.stringify(mqbody),
-            //                   method: "POST",
-            //                   mode: "cors",
-            //                   credentials: "include",
-            //                 }
-            //               );
-
-            //               const newMediaRes = await newMediaReq.json();
-
-            //               mediaQuery.attributes.forEach(async (attribute) => {
-            //                 const msbody = generateMediaStylesBody(
-            //                   newMediaRes,
-            //                   newAttrRes,
-            //                   attribute,
-            //                   bildrSocketID,
-            //                   revisionID,
-            //                   projectID
-            //                 );
-
-            //                 await fetch(
-            //                   "https://www.bildr.com/_/record/save/18",
-            //                   {
-            //                     headers: {
-            //                       accept: "*/*",
-            //                       "content-type": "application/json",
-            //                     },
-            //                     body: JSON.stringify(msbody),
-            //                     method: "POST",
-            //                     mode: "cors",
-            //                     credentials: "include",
-            //                   }
-            //                 );
-            //               });
-            //               resolve();
-            //             } catch (error) {
-            //               reject(error);
-            //             }
-            //           }
-            //         );
-            //         // Add the promise to the array
-            //         nestedMediaQueriesPromises.push(newMediaQueryPromise);
-            //       }
-            //     })();
-            //   }
-            //   // Wait for all the promises to resolve
-            //   await Promise.all(nestedMediaQueriesPromises);
-            // }
           })();
         }
       }

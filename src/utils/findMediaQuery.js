@@ -1,4 +1,4 @@
-export function findMediaQuery(mediaQuery) {
+export function findMediaQuery(mediaQuery, createdMediaQueries) {
   let searchName;
 
   switch (parseInt(mediaQuery.name, 10)) {
@@ -22,8 +22,12 @@ export function findMediaQuery(mediaQuery) {
       break;
   }
 
-  const foundMediaQuery = brwFormRoot._vars.mediaQueriesArray.find(
-    (mq) => mq.name === searchName
-  );
+  const allMediaQueries = [
+    ...brwFormRoot._vars.mediaQueriesArray,
+    ...createdMediaQueries,
+  ];
+
+  const foundMediaQuery = allMediaQueries.find((mq) => mq.name === searchName);
+
   return foundMediaQuery;
 }

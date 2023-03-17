@@ -12,8 +12,6 @@ export const bildrSocketID = generateUID();
 
 export async function performActions(classesArray) {
   try {
-    const createdMediaQueries = [];
-
     for (const [index, classObj] of classesArray.entries()) {
       const { selector, attributes, pseudoSelectors, mediaQueries } = classObj;
 
@@ -48,10 +46,7 @@ export async function performActions(classesArray) {
         for (const mediaQuery of mediaQueries) {
           await (async () => {
             // Check if the media query exists
-            const foundMediaQuery = findMediaQuery(
-              mediaQuery,
-              createdMediaQueries
-            );
+            const foundMediaQuery = findMediaQuery(mediaQuery);
 
             if (foundMediaQuery) {
               // Update the media query
@@ -99,7 +94,6 @@ export async function performActions(classesArray) {
                     );
 
                     const newMediaRes = await newMediaReq.json();
-                    createdMediaQueries.push(newMediaRes.obj.recs[0]);
 
                     mediaQuery.attributes.forEach(async (attribute) => {
                       const msbody = generateMediaStylesBody(
@@ -253,10 +247,7 @@ export async function performActions(classesArray) {
               for (const mediaQuery of pseudoSelector.mediaQueries) {
                 await (async () => {
                   // Check if the media query exists
-                  const foundMediaQuery = findMediaQuery(
-                    mediaQuery,
-                    createdMediaQueries
-                  );
+                  const foundMediaQuery = findMediaQuery(mediaQuery);
 
                   if (foundMediaQuery) {
                     // Update the media query

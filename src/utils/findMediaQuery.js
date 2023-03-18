@@ -22,11 +22,10 @@ export function findMediaQuery(mediaQuery) {
       break;
   }
 
-  const allMediaQueries = [
-    ...BildrCacheSelected.css.cacheFilters[
+  const allMediaQueries =
+    BildrCacheSelected.css.cacheFilters[
       BildrCacheSelected.css.cacheFilters.length - 1
-    ].recs,
-  ];
+    ].recs;
 
   const foundMediaQuery = allMediaQueries.find((mq) => mq.name === searchName);
 

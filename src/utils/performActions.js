@@ -230,7 +230,7 @@ export async function performActions(classesArray) {
                     revisionID: revisionID,
                     bildrSocketID: bildrSocketID,
                     isPrimary: isPrimary,
-                    attributes: attributes, // Check if this should be pseudoSelector.attributes
+                    attributes: attributes,
                     states: states,
                     id: primaryClassID,
                   })

@@ -20,7 +20,7 @@ var BildrBulkStylesCreator;
     constructor() {
       super(
         "BildrBulkStylesCreator",
-        "https://p27b199c99d034975afab252b7f1086c4.bildr.com"
+        "https://p27b199c99d034975afab252b7f1086c4.bildr.com/"
       );
       this.addAction("hidePlugin", () => {
         this.hide();
@@ -102,6 +102,8 @@ var BildrBulkStylesCreator;
   });
 
   const config = { childList: true, subtree: true };
+
+  observer.observe(targetNode, config);
 
   document.body.appendChild(modalWrapper);
   aceEditorObj.init();

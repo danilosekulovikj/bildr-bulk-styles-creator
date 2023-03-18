@@ -1,7 +1,7 @@
 {
   "name": "bildr-bulk-styles-creator",
   "private": true,
-  "version": "1.1.0-beta",
+  "version": "3.0.0",
   "description": "Bildr - Bulk Styles Creator is a plugin that generates style classes in the background, making it easy to import pre-existing classes without manual copying and pasting.",
   "scripts": {
     "dev": "vite",
@@ -24,5 +24,8 @@
   "homepage": "https://github.com/danilosekulovikj/bildr-css-class-creator#readme",
   "devDependencies": {
     "vite": "^4.1.0"
+  },
+  "dependencies": {
+    "css-tree": "^2.3.1"
   }
 }

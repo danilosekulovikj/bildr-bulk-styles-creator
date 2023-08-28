@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/danilosekulovikj/bildr-css-class-creator#readme",
   "devDependencies": {
-    "vite": "^4.1.0"
+    "vite": "^4.1.5"
   },
   "dependencies": {
     "css-tree": "^2.3.1"
